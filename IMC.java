@@ -4,8 +4,8 @@ public class IMC {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        System.out.println("Informe sua altura: ");
-        int altura = input.nextInt();
+        System.out.println("Informe sua altura (m): ");
+        double altura = input.nextDouble();
 
         System.out.println("Informe seu peso (em Kg): ");
         double peso = input.nextDouble();
