@@ -1,10 +1,14 @@
 package src;
 
+import java.util.ArrayList;
+
 public class Block {
     private int type = -1;
 
+    public static int MAX_SIZE = 4;
+
     private int orientation = 0;
-    private int[][] shape = new int[4][4];
+    private int[][] shape = new int[MAX_SIZE][MAX_SIZE];
     private int[][][] rotations;
     
     public int[] pos = new int[2];
@@ -12,6 +16,31 @@ public class Block {
     public Block(int[][][] rotations) {
         this.rotations = rotations;
         this.shape = this.rotations[this.orientation];
+    }
+
+    public int[][] get_shape() {
+        return this.shape;
+    }
+
+    public int[][] get_positions() {
+        ArrayList<int[]> to_insert = new ArrayList<int[]>();
+
+        for (int pos_y = 0; pos_y < Block.MAX_SIZE; pos_y++) {
+            for (int pos_x = 0; pos_x < Block.MAX_SIZE; pos_x++) {
+                // Skip empty positions
+                if (this.shape[pos_y][pos_x] == 0) {
+                    continue;
+                }
+
+                int[] pos = {pos_x * this.pos[0], pos_y * this.pos[1]};
+
+                to_insert.add(pos);
+            }
+        }
+
+        int[][] positions = (int[][]) to_insert.toArray();
+        
+        return positions;
     }
 
     public int[][] rotate() {
