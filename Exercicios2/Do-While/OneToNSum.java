@@ -1,20 +1,22 @@
 import java.util.Scanner;
 
-public class Desafio {
+public class OneToNSum {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         System.out.println("Informe um número: ");
-        float num1 = input.nextFloat();
+        int num1 = input.nextInt();
         input.close();
 
         int i = 0;
+        int sum = 0;
         do {
-            if (i % 2 == 0 || i % 3 == 0) {
-                System.out.println(i);
-            }
+            sum += i;
+            System.out.println(sum);
             i++;
         }
         while (i <= num1);
+
+        System.out.println("A soma total é: " + sum);
     }
 }

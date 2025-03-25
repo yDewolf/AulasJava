@@ -1,18 +1,16 @@
 import java.util.Scanner;
 
-public class Desafio {
+public class Tabuada {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         System.out.println("Informe um número: ");
-        float num1 = input.nextFloat();
+        int num1 = input.nextInt();
         input.close();
 
         int i = 0;
         do {
-            if (i % 2 == 0 || i % 3 == 0) {
-                System.out.println(i);
-            }
+            System.out.println(num1 + " * " + i + " = " + (num1 * i));
             i++;
         }
         while (i <= num1);

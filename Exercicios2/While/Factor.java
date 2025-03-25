@@ -9,7 +9,7 @@ public class Factor {
         int num1 = input.nextInt();
         input.close();
 
-        int i = 0;
+        int i = 1;
         int factor = 1;
         while (i <= num1) {
             factor *= i;

@@ -1,20 +1,22 @@
 import java.util.Scanner;
 
-public class Desafio {
+public class Factor {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
         System.out.println("Informe um número: ");
-        float num1 = input.nextFloat();
+        int num1 = input.nextInt();
         input.close();
 
-        int i = 0;
+        int i = 1;
+        int factor = 1;
         do {
-            if (i % 2 == 0 || i % 3 == 0) {
-                System.out.println(i);
-            }
+            factor *= i;
+            System.out.println(factor);
             i++;
         }
         while (i <= num1);
+
+        System.out.println(num1 + "! = " + factor);
     }
 }
