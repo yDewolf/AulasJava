@@ -38,8 +38,11 @@ public class Block {
             }
         }
 
-        int[][] positions = (int[][]) to_insert.toArray();
-        
+        int[][] positions = new int[to_insert.size()][2];
+        for (int idx = 0; idx < positions.length; idx ++) {
+            positions[idx] = to_insert.get(idx);
+        }
+
         return positions;
     }
 

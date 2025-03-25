@@ -3,16 +3,37 @@ package src;
 import java.util.ArrayList;
 
 public class TetrisGame {
-    private int[][] game_grid;
+    private ArrayList<Block> block_queue = new ArrayList<Block>();
+    private BlockGenerator blockGenerator = new BlockGenerator();
+    private int max_queue_size = 1;
+
+    
     private int size_x = 10;
     private int size_y = 24;
+    private int[][] game_grid = new int[24][10];
 
     private Block current_block;
     // DirectionsEnum.java
     private static int[][] DIRECTIONS = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
 
     public TetrisGame() {
+        gen_block_queue();
+        this.current_block = blockGenerator.generate_block();
+        System.out.println(current_block.pos[0] + " " + current_block.pos[1]);
     }
+
+    private void gen_block_queue() {
+        for (int idx = 0; idx < max_queue_size; idx++) {
+            if (block_queue.size() < idx) {
+                continue;
+            }
+
+            Block block = blockGenerator.generate_block();
+            block_queue.add(block);
+        }
+    }
+
+    // Mechanics
 
     // Returns true if the block could be moved
     public boolean move_block(int direction_idx) {
@@ -20,6 +41,7 @@ public class TetrisGame {
         
         for (int[] pos : this.current_block.get_positions()) {
             int[] new_pos = {pos[0] + direction[0], pos[1] + direction[1]};
+            // System.out.println("New position: " + new_pos[0] + " " + new_pos[1]);
             if (!check_inside_bounds(new_pos) || !check_pos_available(new_pos)) {
                 return false;
             }
@@ -27,6 +49,7 @@ public class TetrisGame {
 
         this.current_block.pos[0] = this.current_block.pos[0] + direction[0];
         this.current_block.pos[1] = this.current_block.pos[1] + direction[1];
+        System.out.println(current_block.pos[0] + " " + current_block.pos[1]);
 
         return true;
     }
@@ -48,7 +71,7 @@ public class TetrisGame {
         return false;
     }
 
-    
+
     // Returns true if the block was placed
     private boolean fix_block(Block block) {
         int[][] positions = block.get_positions();
