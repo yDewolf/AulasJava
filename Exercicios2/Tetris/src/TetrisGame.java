@@ -51,6 +51,8 @@ public class TetrisGame {
         this.current_block.pos[1] = this.current_block.pos[1] + direction[1];
         System.out.println(current_block.pos[0] + " " + current_block.pos[1]);
 
+        update_console();
+
         return true;
     }
 
@@ -102,7 +104,7 @@ public class TetrisGame {
     public boolean check_pos_available(int[] pos) {
         return this.game_grid[pos[1]][pos[0]] == 0;
     }
-    
+
     public boolean check_inside_bounds(int[] pos) {
         if (pos[0] > this.size_x || pos[1] > this.size_y) {
             return false;
@@ -113,6 +115,43 @@ public class TetrisGame {
         }
 
         return true;
+    }
+
+    public void update_console() {
+        clear_console();
+        System.out.println(get_ui_string());
+    }
+
+    public String get_ui_string() {
+        String ui = "";
+
+        String[] rows = new String[this.size_y];
+        for (int y = 0; y < this.size_y; y++) {
+            String row_string = "";
+            for (int x = 0; x < this.size_x; x++) {
+                String tile = this.game_grid[y][x] == 0 ? " " : "O";
+                row_string += " " + tile + " ";
+            }
+            // ui += row_string + "\n";
+            rows[y] = row_string;
+        }
+
+        for (int[] pos : this.current_block.get_positions()) {
+            char[] string_array = rows[pos[1]].toCharArray();
+            string_array[pos[0]] = 'O';
+            rows[pos[1]] = string_array.toString();
+        }
+
+        for (int idx = 0; idx < this.size_y; idx++) {
+            ui += "|" + rows[idx] + "|\n";
+        }
+
+        return ui;
+    }
+
+    private void clear_console() {
+        System.out.print("\033[H\033[2J");
+        System.out.flush();
     }
     // Insert block
     // Move current block

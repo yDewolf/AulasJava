@@ -3,7 +3,7 @@ package src;
 import java.util.ArrayList;
 
 public class Block {
-    private int type = -1;
+    // private int type = -1;
 
     public static int MAX_SIZE = 4;
 
