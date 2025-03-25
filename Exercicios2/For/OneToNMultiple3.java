@@ -1,3 +1,4 @@
+package Exercicios2.For;
 import java.util.Scanner;
 
 public class OneToNMultiple3 {

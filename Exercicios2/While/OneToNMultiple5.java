@@ -1,7 +1,7 @@
-package Exercicios2.For;
+package Exercicios2.While;
 import java.util.Scanner;
 
-public class OneToNPair {
+public class OneToNMultiple5 {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
@@ -9,10 +9,12 @@ public class OneToNPair {
         int num1 = input.nextInt();
         input.close();
 
-        for (int i = 1; i <= num1; i++) {
-            if (i % 2 == 0) {
+        int i = 0;
+        while (i <= num1) {
+            if (i % 5 != 0) {
                 System.out.println(i);
             }
+            i++;
         }
     }
 }

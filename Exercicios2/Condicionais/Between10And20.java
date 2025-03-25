@@ -1,3 +1,5 @@
+package Exercicios2.Condicionais;
+
 import java.util.Scanner;
 
 public class Between10And20 {
