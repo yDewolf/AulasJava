@@ -125,22 +125,33 @@ public class TetrisGame {
     public String get_ui_string() {
         String ui = "";
 
+        int[][] board = new int[this.size_y][this.size_x];
+        for (int y = 0; y < this.size_y; y++) {
+            for (int x = 0; x < this.size_x; x++) {
+                board[y][x] = this.game_grid[y][x];
+            }
+        }
+
+        for (int[] pos : this.current_block.get_positions()) {
+            board[pos[1]][pos[0]] = 1;
+        }
+
         String[] rows = new String[this.size_y];
         for (int y = 0; y < this.size_y; y++) {
             String row_string = "";
             for (int x = 0; x < this.size_x; x++) {
-                String tile = this.game_grid[y][x] == 0 ? " " : "O";
+                String tile = board[y][x] == 0 ? " " : "O";
                 row_string += " " + tile + " ";
             }
             // ui += row_string + "\n";
             rows[y] = row_string;
         }
 
-        for (int[] pos : this.current_block.get_positions()) {
-            char[] string_array = rows[pos[1]].toCharArray();
-            string_array[pos[0]] = 'O';
-            rows[pos[1]] = string_array.toString();
-        }
+        // for (int[] pos : this.current_block.get_positions()) {
+        //     char[] string_array = rows[pos[1]].toCharArray();
+        //     string_array[pos[0]] = 'O';
+        //     rows[pos[1]] = string_array.toString();
+        // }
 
         for (int idx = 0; idx < this.size_y; idx++) {
             ui += "|" + rows[idx] + "|\n";
