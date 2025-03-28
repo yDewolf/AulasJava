@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class TetrisController extends TetrisGame implements KeyListener {
     public ArrayList<Integer> action_queue = new ArrayList<Integer>();
-    public boolean register_holds = true;
+    public boolean register_holds = false;
     public boolean render_console = true;
     public double delta = 1;
 
@@ -25,8 +25,6 @@ public class TetrisController extends TetrisGame implements KeyListener {
             idle_seconds = 0;
         }
 
-        // System.out.println(idle_seconds);
-
         this.parse_action_queue();
         this.apply_gravity();
 
@@ -34,7 +32,6 @@ public class TetrisController extends TetrisGame implements KeyListener {
         if (idle_seconds > idle_place_threshold && check_on_top(current_block)) {
             place_block();
             next_block();
-            will_place = false;
         }
 
         if (this.changed && render_console) {
@@ -72,14 +69,26 @@ public class TetrisController extends TetrisGame implements KeyListener {
                 move_block(3);
                 break;
             
-            case KeyEvent.VK_E:
+            case KeyEvent.VK_Z:
                 rotate_block(false);
                 break;
             
-            case KeyEvent.VK_Q:
+            case KeyEvent.VK_X:
                 rotate_block(true);
                 break;
-                
+            
+            case KeyEvent.VK_SPACE:
+                boolean placed = false;
+                while (!placed) {
+                    // Move block down
+                    move_block(1);
+                    if (check_on_top(current_block)) {
+                        placed = place_block();
+                    }
+                }
+                next_block();
+                break;
+
             default:
                 break;
         }

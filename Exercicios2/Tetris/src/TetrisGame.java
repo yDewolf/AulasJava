@@ -11,7 +11,6 @@ public class TetrisGame {
     private double current_gravity = 0.0;
 
     public boolean changed = false;
-    protected boolean will_place = false;
 
     private int size_x = 10;
     private int size_y = 12;
@@ -96,10 +95,10 @@ public class TetrisGame {
     public boolean place_block() {
         if (fix_block(this.current_block)) {
             this.current_block = null;
+            changed = true;
             return true;
         }
         
-        changed = true;
 
         return false;
     }
@@ -172,7 +171,6 @@ public class TetrisGame {
         for (int[] pos : block.get_positions()) {
             // Check if it is on the bottom of the map
             if (check_bottom(pos)) {
-                will_place = true;
                 return true;
             }
 
@@ -180,7 +178,6 @@ public class TetrisGame {
             if (!check_pos_available(pos_below)) {
                 // Variable used to determine if the block should be placed
                 // on next idle frame (frame without any actions)
-                will_place = true;
                 return true;
             }
         }
@@ -257,7 +254,7 @@ public class TetrisGame {
     }
 
     private void clear_console() {
-        System.out.print("\033[H\033[2J");
+        // System.out.print("\033[H\033[2J");
         System.out.flush();
     }
     // Insert block
