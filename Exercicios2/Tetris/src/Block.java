@@ -32,7 +32,7 @@ public class Block {
                     continue;
                 }
 
-                int[] pos = {pos_x * this.pos[0], pos_y * this.pos[1]};
+                int[] pos = {pos_x + 1 * this.pos[0], pos_y + 1 * this.pos[1]};
 
                 to_insert.add(pos);
             }
@@ -49,7 +49,7 @@ public class Block {
     public int[][] rotate() {
         this.orientation++;
         if (this.orientation >= this.rotations.length) {
-            this.orientation = 1;
+            this.orientation = 0;
         }
 
         update_shape();

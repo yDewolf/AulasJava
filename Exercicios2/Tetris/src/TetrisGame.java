@@ -7,14 +7,18 @@ public class TetrisGame {
     private BlockGenerator blockGenerator = new BlockGenerator();
     private int max_queue_size = 1;
 
+    public double tile_per_frame = 0.05;
+    private double current_gravity = 0.0;
+
+    public boolean changed = false;
     
     private int size_x = 10;
-    private int size_y = 24;
+    private int size_y = 12;
     private int[][] game_grid = new int[24][10];
 
     private Block current_block;
     // DirectionsEnum.java
-    private static int[][] DIRECTIONS = {{0, 1}, {0, -1}, {-1, 0}, {1, 0}};
+    private static int[][] DIRECTIONS = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
 
     public TetrisGame() {
         gen_block_queue();
@@ -33,7 +37,20 @@ public class TetrisGame {
         }
     }
 
+    public void on_frame_update() {
+        apply_gravity();
+    }
+
     // Mechanics
+
+    public void apply_gravity() {
+        current_gravity += tile_per_frame;
+        if (current_gravity >= 1) {
+            // Move block down
+            move_block(1);
+            current_gravity = 0;
+        }
+    }
 
     // Returns true if the block could be moved
     public boolean move_block(int direction_idx) {
@@ -49,9 +66,10 @@ public class TetrisGame {
 
         this.current_block.pos[0] = this.current_block.pos[0] + direction[0];
         this.current_block.pos[1] = this.current_block.pos[1] + direction[1];
-        System.out.println(current_block.pos[0] + " " + current_block.pos[1]);
 
-        update_console();
+        // update_console();
+
+        changed = true;
 
         return true;
     }
@@ -69,10 +87,38 @@ public class TetrisGame {
             this.current_block = null;
             return true;
         }
+        
+        changed = true;
 
         return false;
     }
 
+    public boolean rotate_block(boolean counter_clockwise) {
+        if (!counter_clockwise) {
+            this.current_block.rotate();
+        } else {
+            this.current_block.unrotate();
+        }
+        
+        for (int[] pos : this.current_block.get_positions()) {
+            int[] new_pos = {pos[0], pos[1]};
+            // Fix this later !!!
+            if (!check_inside_bounds(new_pos) || !check_pos_available(new_pos)) {
+                if (!counter_clockwise) {
+                    this.current_block.unrotate();
+                } else {
+                    this.current_block.rotate();
+                }
+
+                return false;
+            }
+        }
+
+        // update_console();
+        changed = true;
+
+        return true;
+    }
 
     // Returns true if the block was placed
     private boolean fix_block(Block block) {
@@ -106,7 +152,7 @@ public class TetrisGame {
     }
 
     public boolean check_inside_bounds(int[] pos) {
-        if (pos[0] > this.size_x || pos[1] > this.size_y) {
+        if (pos[0] >= this.size_x || pos[1] >= this.size_y) {
             return false;
         } 
 
@@ -120,10 +166,15 @@ public class TetrisGame {
     public void update_console() {
         clear_console();
         System.out.println(get_ui_string());
+        changed = false;
     }
 
     public String get_ui_string() {
-        String ui = "";
+        String ui = "+";
+        for (int idx = 0; idx < this.size_x; idx++) {
+            ui += " _ ";
+        }
+        ui += "+\n";
 
         int[][] board = new int[this.size_y][this.size_x];
         for (int y = 0; y < this.size_y; y++) {
