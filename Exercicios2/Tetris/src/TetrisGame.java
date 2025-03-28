@@ -14,7 +14,7 @@ public class TetrisGame {
 
     private int size_x = 10;
     private int size_y = 12;
-    private int[][] game_grid = new int[24][10];
+    private int[][] game_grid = new int[size_y][size_x];
 
     protected Block current_block;
     // DirectionsEnum.java
@@ -43,10 +43,48 @@ public class TetrisGame {
             place_block();
             next_block();
         }
+
+        clear_filled_rows();
     }
 
+    
     // Mechanics
+    public void clear_filled_rows() {
+        ArrayList<Integer> to_clear = new ArrayList<Integer>();
 
+        for (int y = 0; y < this.size_y; y++) {
+            int filled_positions = 0;
+            for (int x = 0; x < this.size_x; x++) {
+                if (this.game_grid[y][x] == 1) {
+                    filled_positions += 1;
+                }
+            }
+            if (filled_positions == this.size_x) {
+                to_clear.add(y);
+            }
+        }
+
+        for (int row : to_clear) {
+            for (int x = 0; x < this.size_x; x++) {
+                // Remove tile
+                this.game_grid[row][x] = 0;
+            }
+        }
+        if (to_clear.isEmpty()) {
+            return;
+        }
+
+        int go_down = to_clear.size();
+        for (int y = this.size_y - 1; y > 0; y--) {
+            for (int x = 0; x < this.size_x; x++) {
+                if (this.game_grid[y][x] == 1) {
+                    this.game_grid[y + go_down][x] = 1;
+                    this.game_grid[y][x] = 0;
+                }
+            }
+        }
+    }
+    
     public void apply_gravity() {
         current_gravity += tile_per_frame;
         if (current_gravity >= 1) {
@@ -204,6 +242,7 @@ public class TetrisGame {
     public boolean check_bottom(int[] pos) {
         return pos[1] >= this.size_y - 1;
     }
+
 
     public void update_console() {
         clear_console();

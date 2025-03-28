@@ -34,6 +34,8 @@ public class TetrisController extends TetrisGame implements KeyListener {
             next_block();
         }
 
+        clear_filled_rows();
+
         if (this.changed && render_console) {
             this.update_console();
         }
