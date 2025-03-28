@@ -13,6 +13,8 @@ public class Main {
 
         // 1000 / FPS
         int update_rate_ms = 1000 / 30;
+        controller.delta = (double) update_rate_ms;
+
         long time = System.currentTimeMillis();
 
         Timer timer = new Timer();

@@ -11,12 +11,13 @@ public class TetrisGame {
     private double current_gravity = 0.0;
 
     public boolean changed = false;
-    
+    protected boolean will_place = false;
+
     private int size_x = 10;
     private int size_y = 12;
     private int[][] game_grid = new int[24][10];
 
-    private Block current_block;
+    protected Block current_block;
     // DirectionsEnum.java
     private static int[][] DIRECTIONS = {{0, -1}, {0, 1}, {-1, 0}, {1, 0}};
 
@@ -39,6 +40,10 @@ public class TetrisGame {
 
     public void on_frame_update() {
         apply_gravity();
+        if (check_on_top(this.current_block)) {
+            place_block();
+            next_block();
+        }
     }
 
     // Mechanics
@@ -50,6 +55,12 @@ public class TetrisGame {
             move_block(1);
             current_gravity = 0;
         }
+    }
+
+    public void next_block() {
+        this.current_block = this.block_queue.get(0);
+        this.block_queue.remove(0);
+        gen_block_queue();
     }
 
     // Returns true if the block could be moved
@@ -100,17 +111,11 @@ public class TetrisGame {
             this.current_block.unrotate();
         }
         
-        for (int[] pos : this.current_block.get_positions()) {
-            int[] new_pos = {pos[0], pos[1]};
-            // Fix this later !!!
-            if (!check_inside_bounds(new_pos) || !check_pos_available(new_pos)) {
-                if (!counter_clockwise) {
-                    this.current_block.unrotate();
-                } else {
-                    this.current_block.rotate();
-                }
-
-                return false;
+        if (!validate_block(this.current_block, null)) {
+            if (!counter_clockwise) {
+                this.current_block.unrotate();
+            } else {
+                this.current_block.rotate();
             }
         }
 
@@ -135,8 +140,8 @@ public class TetrisGame {
 
         for (int idx = 0; idx < positions.length; idx++) {
             // Set the position to 1
-            set_pos(positions[idx][1],
-                    positions[idx][0], 1);
+            set_pos(positions[idx][0],
+                    positions[idx][1], 1);
         }
 
         return true;
@@ -145,6 +150,42 @@ public class TetrisGame {
     private void set_pos(int pos_x, int pos_y, int value) {
         this.game_grid[pos_y][pos_x] = value;
 
+    }
+
+    public boolean validate_block(Block block, int[] direction) {
+        if (direction == null) {
+            direction = new int[2];
+            direction[0] = 0;
+            direction[1] = 0;
+        }
+        for (int[] pos : block.get_positions()) {
+            int[] new_pos = {pos[0] + direction[0], pos[1] + direction[1]};
+            if (!check_inside_bounds(new_pos) || !check_pos_available(new_pos)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public boolean check_on_top(Block block) {
+        for (int[] pos : block.get_positions()) {
+            // Check if it is on the bottom of the map
+            if (check_bottom(pos)) {
+                will_place = true;
+                return true;
+            }
+
+            int[] pos_below = {pos[0], pos[1] + 1};
+            if (!check_pos_available(pos_below)) {
+                // Variable used to determine if the block should be placed
+                // on next idle frame (frame without any actions)
+                will_place = true;
+                return true;
+            }
+        }
+
+        return false;
     }
 
     public boolean check_pos_available(int[] pos) {
@@ -161,6 +202,10 @@ public class TetrisGame {
         }
 
         return true;
+    }
+
+    public boolean check_bottom(int[] pos) {
+        return pos[1] >= this.size_y - 1;
     }
 
     public void update_console() {
