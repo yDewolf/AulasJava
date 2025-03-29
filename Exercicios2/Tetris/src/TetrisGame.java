@@ -5,7 +5,7 @@ import java.util.ArrayList;
 public class TetrisGame {
     private ArrayList<Block> block_queue = new ArrayList<Block>();
     private BlockGenerator blockGenerator = new BlockGenerator();
-    private int max_queue_size = 1;
+    private int max_queue_size = 3;
 
     public double tile_per_frame = 0.05;
     private double current_gravity = 0.0;
@@ -22,7 +22,7 @@ public class TetrisGame {
 
     public TetrisGame() {
         gen_block_queue();
-        this.current_block = blockGenerator.generate_block();
+        next_block();
         System.out.println(current_block.pos[0] + " " + current_block.pos[1]);
     }
 
@@ -106,6 +106,7 @@ public class TetrisGame {
         this.current_block = this.block_queue.get(0);
         this.block_queue.remove(0);
         gen_block_queue();
+        changed = true;
     }
 
     // Returns true if the block could be moved
@@ -259,12 +260,28 @@ public class TetrisGame {
     }
 
     public String get_ui_string() {
+        // Top bar
         String ui = "+";
         for (int idx = 0; idx < this.size_x; idx++) {
-            ui += " _ ";
+            ui += "___";
         }
         ui += "+\n";
 
+        ui += get_board_string();
+
+        // Bottom row
+        ui += "+";
+        for (int idx = 0; idx < this.size_x; idx++) {
+            ui += "___";
+        }
+        ui += "+\n\n";
+
+        ui += get_block_queue_string();
+
+        return ui;
+    }
+
+    private String get_board_string() {
         int[][] board = new int[this.size_y][this.size_x];
         for (int y = 0; y < this.size_y; y++) {
             for (int x = 0; x < this.size_x; x++) {
@@ -276,6 +293,7 @@ public class TetrisGame {
             board[pos[1]][pos[0]] = 1;
         }
 
+        // Create game grid rows
         String[] rows = new String[this.size_y];
         for (int y = 0; y < this.size_y; y++) {
             String row_string = "";
@@ -287,15 +305,58 @@ public class TetrisGame {
             rows[y] = row_string;
         }
 
+        String board_string = "";
         for (int idx = 0; idx < this.size_y; idx++) {
-            ui += "|" + rows[idx] + "|\n";
+            board_string += "|" + rows[idx] + "|\n";
+        } 
+
+        return board_string;
+    }
+
+    private String get_block_queue_string() {
+        String queue_str = "";
+
+        // String[][] str_grid = new String[Block.MAX_SIZE][Block.MAX_SIZE * max_queue_size];
+        // for (int y = 0; y < Block.MAX_SIZE; y++) {
+        //     for (int x = 0; x < Block.MAX_SIZE * max_queue_size; x++) {
+        //         str_grid[y][x] = " ";
+        //     }
+        // }
+
+
+        String[][][] shape_grids = new String[max_queue_size][][];
+        for (int block_idx = 0; block_idx < max_queue_size; block_idx++) {
+            int[][] shape = this.block_queue.get(block_idx).get_shape();
+            
+            String[][] str_grid = new String[Block.MAX_SIZE][Block.MAX_SIZE];
+
+            for (int y = 0; y < Block.MAX_SIZE; y++) {
+                for (int x = 0; x < Block.MAX_SIZE; x++) {
+                    str_grid[y][x] = shape[y][x] == 1 ? " O " : "   ";
+                }
+            }
+            shape_grids[block_idx] = str_grid;
+        }
+        
+
+        for (int row = 0; row < Block.MAX_SIZE; row++) {
+            String row_str = "";
+            for (int block_idx = 0; block_idx < max_queue_size; block_idx++) {
+                String block_row = block_idx == 0 ? "|" : "";
+                for (int x = 0; x < Block.MAX_SIZE; x++) {
+                    block_row += shape_grids[block_idx][row][x];
+                }
+
+                row_str += block_row + "|";
+            }
+            queue_str += row_str + "\n";
         }
 
-        return ui;
+        return queue_str;
     }
 
     private void clear_console() {
-        // System.out.print("\033[H\033[2J");
+        System.out.print("\033[H\033[2J");
         System.out.flush();
     }
     // Insert block
