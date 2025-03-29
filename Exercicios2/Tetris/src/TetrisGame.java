@@ -64,10 +64,14 @@ public class TetrisGame {
             }
         }
 
+        int min_descend_row = 0;
         for (int row : to_clear) {
             for (int x = 0; x < this.size_x; x++) {
                 // Remove tile
                 this.game_grid[row][x] = 0;
+            }
+            if (row > min_descend_row) {
+                min_descend_row = row;
             }
         }
         if (to_clear.isEmpty()) {
@@ -75,9 +79,13 @@ public class TetrisGame {
         }
 
         int go_down = to_clear.size();
-        for (int y = this.size_y - 1; y > 0; y--) {
+        for (int y = min_descend_row - 1; y >= 0; y--) {
+            if (y == this.size_y - 1) {
+                continue;
+            }
+
             for (int x = 0; x < this.size_x; x++) {
-                if (this.game_grid[y][x] == 1) {
+                 if (this.game_grid[y][x] == 1) {
                     this.game_grid[y + go_down][x] = 1;
                     this.game_grid[y][x] = 0;
                 }
@@ -278,12 +286,6 @@ public class TetrisGame {
             // ui += row_string + "\n";
             rows[y] = row_string;
         }
-
-        // for (int[] pos : this.current_block.get_positions()) {
-        //     char[] string_array = rows[pos[1]].toCharArray();
-        //     string_array[pos[0]] = 'O';
-        //     rows[pos[1]] = string_array.toString();
-        // }
 
         for (int idx = 0; idx < this.size_y; idx++) {
             ui += "|" + rows[idx] + "|\n";
