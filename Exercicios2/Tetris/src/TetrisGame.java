@@ -316,14 +316,6 @@ public class TetrisGame {
     private String get_block_queue_string() {
         String queue_str = "";
 
-        // String[][] str_grid = new String[Block.MAX_SIZE][Block.MAX_SIZE * max_queue_size];
-        // for (int y = 0; y < Block.MAX_SIZE; y++) {
-        //     for (int x = 0; x < Block.MAX_SIZE * max_queue_size; x++) {
-        //         str_grid[y][x] = " ";
-        //     }
-        // }
-
-
         String[][][] shape_grids = new String[max_queue_size][][];
         for (int block_idx = 0; block_idx < max_queue_size; block_idx++) {
             int[][] shape = this.block_queue.get(block_idx).get_shape();

@@ -53,6 +53,14 @@ public class TetrisController extends TetrisGame implements KeyListener {
         action_queue.clear();
     }
 
+    @Override
+    public String get_ui_string() {
+        String ui = super.get_ui_string();
+        ui += "\nZ -> Rotate | X -> Reverse Rotate\nArrows -> Movement | Space -> Place Below";
+
+        return ui;
+    }
+
     private void parse_input(int key_code) {
         switch (key_code) {
             case KeyEvent.VK_UP:
