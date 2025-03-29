@@ -19,6 +19,10 @@ public class TetrisController extends TetrisGame implements KeyListener {
 
     @Override
     public void on_frame_update() {
+        if (game_status == 2 || game_status == 0) {
+            return;
+        }
+
         if (this.action_queue.isEmpty()) {
             idle_seconds += delta / 1000;
         } else {
@@ -26,6 +30,9 @@ public class TetrisController extends TetrisGame implements KeyListener {
         }
 
         this.parse_action_queue();
+        if (game_status == 0) {
+            return;
+        }
         this.apply_gravity();
 
         // super.on_frame_update();
@@ -35,10 +42,12 @@ public class TetrisController extends TetrisGame implements KeyListener {
         }
 
         clear_filled_rows();
-
         if (this.changed && render_console) {
             this.update_console();
         }
+        
+        // If you lose it will pause the game
+        change_game_status(check_lost() ? 2 : 1);
     }
 
     public void register_input(int key_code) {
@@ -56,7 +65,7 @@ public class TetrisController extends TetrisGame implements KeyListener {
     @Override
     public String get_ui_string() {
         String ui = super.get_ui_string();
-        ui += "\nZ -> Rotate | X -> Reverse Rotate\nArrows -> Movement | Space -> Place Below";
+        ui += "\nZ -> Rotate | X -> Reverse Rotate\nArrows -> Movement | Space -> Place Below\nP -> Pause";
 
         return ui;
     }
@@ -87,6 +96,17 @@ public class TetrisController extends TetrisGame implements KeyListener {
                 rotate_block(true);
                 break;
             
+            case KeyEvent.VK_P:
+                // Pause
+                if (game_status == 1) {
+                    change_game_status(0);
+                } else {
+                    if (game_status == 0) {
+                        change_game_status(1);
+                    }
+                }
+                break;
+
             case KeyEvent.VK_SPACE:
                 boolean placed = false;
                 while (!placed) {

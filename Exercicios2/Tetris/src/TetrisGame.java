@@ -7,6 +7,9 @@ public class TetrisGame {
     private BlockGenerator blockGenerator = new BlockGenerator();
     private int max_queue_size = 3;
 
+    // 0 -> Paused; 1 -> Running; 2 -> Lost; 3 -> Win;
+    public int game_status = 1;
+
     public double tile_per_frame = 0.05;
     private double current_gravity = 0.0;
 
@@ -14,6 +17,7 @@ public class TetrisGame {
 
     private int size_x = 10;
     private int size_y = 12;
+    private int loss_judge_line = 2;
     private int[][] game_grid = new int[size_y][size_x];
 
     protected Block current_block;
@@ -38,6 +42,10 @@ public class TetrisGame {
     }
 
     public void on_frame_update() {
+        if (game_status == 2 || game_status == 0) {
+            return;
+        }
+
         apply_gravity();
         if (check_on_top(this.current_block)) {
             place_block();
@@ -45,8 +53,39 @@ public class TetrisGame {
         }
 
         clear_filled_rows();
+        // If you lose it will pause the game
+        change_game_status(check_lost() ? 2 : 1);
     }
 
+    public void change_game_status(int new_status) {
+        if (game_status == new_status) {
+            return;
+        }
+        switch (new_status) {
+            case 0:
+                System.out.println("Paused Game");
+                break;
+            
+            case 1:
+                System.out.println("The game is now running");
+                break;
+            
+            case 2:
+                System.out.println("You lost the game");
+                break;
+            
+            case 3:
+                System.out.println("You Won");
+                break;
+
+            default:
+                // Don't update the game status
+                System.err.println("Invalid game status");
+                return;
+        }
+        
+        game_status = new_status;
+    }
     
     // Mechanics
     public void clear_filled_rows() {
@@ -212,6 +251,20 @@ public class TetrisGame {
         }
 
         return true;
+    }
+
+    public boolean check_lost() {
+        for (int y = loss_judge_line; y >= 0; y--) {
+            for (int x = 0; x < this.size_x; x++) {
+                // You lost the 'game'
+                if (game_grid[y][x] == 1) {
+                    return true;
+                }
+            }
+        }
+
+        // You are ok
+        return false;
     }
 
     public boolean check_on_top(Block block) {
