@@ -143,7 +143,7 @@ public class BlockGenerator {
     private static final int[][][][] BLOCKS = {O_BLOCK, I_BLOCK, L_BLOCK, L_FLIPPED_BLOCK, S_BLOCK, S_FLIPPED_BLOCK, K_BLOCK};
 
     public Block generate_block() {
-        int block_idx = this.rng.nextInt(0, BLOCKS.length);
+        int block_idx = rng.nextInt(BLOCKS.length) % BLOCKS.length;
 
         return new Block(BLOCKS[block_idx]);
     }
